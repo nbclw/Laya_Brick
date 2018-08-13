@@ -61,6 +61,7 @@ var BackgroundUI;
             t.pos((stageWidth - gameAreaWidth) / 2, gameAreaHeight + (messageHeight - fontSize) / 2);
             Laya.stage.addChild(t);
             var score = new Text();
+            score.name = 'score';
             score.text = '0';
             score.fontSize = fontSize;
             score.color = "white";

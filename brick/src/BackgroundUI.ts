@@ -53,6 +53,7 @@ module BackgroundUI {
 			Laya.stage.addChild(t);
 			
 			let score: Text = new Text();
+			score.name='score';
 			score.text = '0';
 			score.fontSize = fontSize;
 			score.color = "white";

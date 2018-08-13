@@ -4,9 +4,11 @@
 module Bricks {
 	import Image = Laya.Image;
 	import BrickPos = Models.BrickPos;
+	import Text = Laya.Text;
 
 	let currPositions: BrickPos[] = new Array();
 	let nextPositions: BrickPos[] = new Array();
+	let currBricks: Image[] = new Array();
 	export class Bricks {
 		constructor() {
 		}
@@ -16,8 +18,8 @@ module Bricks {
 			let max: number = 5;
 			let min: number = -5;
 			let random = parseInt((Math.random() * (max - min + 1) + min).toString(), 10);
-			// this.createNewBricksPostionByRandom(random);
-			this.createNewBricksPostionByRandom(0);
+			this.createNewBricksPostionByRandom(random);
+			// this.createNewBricksPostionByRandom(0);
 			for (let i: number = 0; i < currPositions.length; i++) {
 				if (brickArr[currPositions[i].x][currPositions[i].y - 1].isLog) {
 					b = false;
@@ -36,6 +38,7 @@ module Bricks {
 				brick.top = this.getBrickTop(currPositions[i].y);
 
 				gameBG.addChild(brick);
+				currBricks.push(brick);
 			}
 		}
 		private static createNewImage(): Image {
@@ -97,7 +100,7 @@ module Bricks {
 		}
 		//将下一位置数据拷贝到当前位置，用于后续方块渲染
 		private static moveTo(duration: number): void {
-			let bricks: Image[] = runtime.getCurrBricks();
+			let bricks: Image[] = currBricks;
 			for (let i: number = 0; i < nextPositions.length; i++) {
 				Laya.Tween.to(
 					bricks[i],
@@ -113,39 +116,82 @@ module Bricks {
 			//记录数据：数组相应位置变为1，画上对应图片
 			this.logBircks();
 			//计算满行得分，满行重新绘制
-
+			this.mathScore();
 			//清空：bricks，当前坐标，下一坐标
 			this.clearCurr();
 		}
 		private static logBircks(): void {
+			let gameBG: Image = runtime.getGameBGImage();
 			for (let i: number = 0; i < currPositions.length; i++) {
 				let brick: Image = this.createNewImage();
-				brick.left = this.getBrickLeft(currPositions[i].x) + (stageWidth - gameAreaWidth) / 2;
+				brick.left = this.getBrickLeft(currPositions[i].x);
 				brick.top = this.getBrickTop(currPositions[i].y);
 
-				Laya.stage.addChild(brick);
+				gameBG.addChild(brick);
 
 				brickArr[currPositions[i].x][currPositions[i].y].isLog = true;
 				brickArr[currPositions[i].x][currPositions[i].y].Brick = brick;
 			}
 		}
-		private static mathScore() {
+		private static mathScore(): void {
+			let destoryLines: number[] = this.getDestoryLines();
+			let destoryCount: number = 0;
+			if (destoryLines.length > 0) {
+				destoryCount = this.destoryLines(destoryLines);
+				let score: Text = <Text>Laya.stage.getChildByName('score');
+				let value: number = parseInt(score.text);
+				value += Math.pow(2, destoryCount) * brickXCount;
+
+				score.text = value.toString();
+			}
+		}
+		private static getDestoryLines(): number[] {
 			let destoryLines: number[] = [];
-			for (let i: number = 0; i < brickArr.length; i++) {
+			for (let j: number = 0; j < brickArr[0].length; j++) {
 				let b: boolean = true;
-				for (let j: number = 0; j < brickArr[i].length; j++) {
+				for (let i: number = 0; i < brickArr.length; i++) {
 					if (!brickArr[i][j].isLog) {
 						b = false;
 						break;
 					}
 				}
-				if (b) destoryLines.push(i);
+				if (b) destoryLines.push(j);
 			}
+
+			return destoryLines;
+		}
+		private static destoryLines(destoryLines: number[]): number {
+			let destoryCount: number = 0;
+			for (let j: number = 0; j < brickArr[0].length; j++) {
+				if (destoryLines.indexOf(j) > -1) {
+					for (let i: number = 0; i < brickArr.length; i++) {
+						brickArr[i][j].Brick.destroy();
+						brickArr[i][j].Brick = null;
+						brickArr[i][j].isLog = false;
+					}
+					destoryCount++;
+				} else {
+					if (j == 0) continue;
+					for (let i: number = 0; i < brickArr.length; i++) {
+						if (brickArr[i][j].isLog) {
+							Laya.Tween.to(
+								brickArr[i][j].Brick,
+								{ x: this.getBrickLeft(i), y: this.getBrickTop(j - destoryCount) },
+								100
+							);
+						}
+					}
+				}
+			}
+			return destoryCount;
 		}
 		private static clearCurr(): void {
-			let gameBG: Image = runtime.getGameBGImage();
-			gameBG.destroyChildren();
-
+			if (currBricks.length > 0) {
+				for (let i: number = 0; i < currBricks.length; i++) {
+					currBricks[i].destroy();
+				}
+			}
+			currBricks = [];
 			currPositions = [];
 			nextPositions = [];
 		}

@@ -7,6 +7,7 @@ var Bricks;
     var BrickPos = Models.BrickPos;
     var currPositions = new Array();
     var nextPositions = new Array();
+    var currBricks = new Array();
     var Bricks = /** @class */ (function () {
         function Bricks() {
         }
@@ -16,8 +17,8 @@ var Bricks;
             var max = 5;
             var min = -5;
             var random = parseInt((Math.random() * (max - min + 1) + min).toString(), 10);
-            // this.createNewBricksPostionByRandom(random);
-            this.createNewBricksPostionByRandom(0);
+            this.createNewBricksPostionByRandom(random);
+            // this.createNewBricksPostionByRandom(0);
             for (var i = 0; i < currPositions.length; i++) {
                 if (brickArr[currPositions[i].x][currPositions[i].y - 1].isLog) {
                     b = false;
@@ -37,6 +38,7 @@ var Bricks;
                 brick.left = this.getBrickLeft(currPositions[i].x);
                 brick.top = this.getBrickTop(currPositions[i].y);
                 gameBG.addChild(brick);
+                currBricks.push(brick);
             }
         };
         Bricks.createNewImage = function () {
@@ -102,7 +104,7 @@ var Bricks;
         };
         //将下一位置数据拷贝到当前位置，用于后续方块渲染
         Bricks.moveTo = function (duration) {
-            var bricks = runtime.getCurrBricks();
+            var bricks = currBricks;
             for (var i = 0; i < nextPositions.length; i++) {
                 Laya.Tween.to(bricks[i], { x: this.getBrickLeft(nextPositions[i].x), y: this.getBrickTop(nextPositions[i].y) }, duration);
             }
@@ -112,23 +114,78 @@ var Bricks;
         Bricks.soildBricks = function () {
             //记录数据：数组相应位置变为1，画上对应图片
             this.logBircks();
-            //判断是否满行，满行重新绘制
+            //计算满行得分，满行重新绘制
+            this.mathScore();
             //清空：bricks，当前坐标，下一坐标
             this.clearCurr();
         };
         Bricks.logBircks = function () {
+            var gameBG = runtime.getGameBGImage();
             for (var i = 0; i < currPositions.length; i++) {
                 var brick = this.createNewImage();
-                brick.left = this.getBrickLeft(currPositions[i].x) + (stageWidth - gameAreaWidth) / 2;
+                brick.left = this.getBrickLeft(currPositions[i].x);
                 brick.top = this.getBrickTop(currPositions[i].y);
-                Laya.stage.addChild(brick);
+                gameBG.addChild(brick);
                 brickArr[currPositions[i].x][currPositions[i].y].isLog = true;
                 brickArr[currPositions[i].x][currPositions[i].y].Brick = brick;
             }
         };
+        Bricks.mathScore = function () {
+            var destoryLines = this.getDestoryLines();
+            var destoryCount = 0;
+            if (destoryLines.length > 0) {
+                destoryCount = this.destoryLines(destoryLines);
+                var score = Laya.stage.getChildByName('score');
+                var value = parseInt(score.text);
+                value += Math.pow(2, destoryCount) * brickXCount;
+                score.text = value.toString();
+            }
+        };
+        Bricks.getDestoryLines = function () {
+            var destoryLines = [];
+            for (var j = 0; j < brickArr[0].length; j++) {
+                var b = true;
+                for (var i = 0; i < brickArr.length; i++) {
+                    if (!brickArr[i][j].isLog) {
+                        b = false;
+                        break;
+                    }
+                }
+                if (b)
+                    destoryLines.push(j);
+            }
+            return destoryLines;
+        };
+        Bricks.destoryLines = function (destoryLines) {
+            var destoryCount = 0;
+            for (var j = 0; j < brickArr[0].length; j++) {
+                if (destoryLines.indexOf(j) > -1) {
+                    for (var i = 0; i < brickArr.length; i++) {
+                        brickArr[i][j].Brick.destroy();
+                        brickArr[i][j].Brick = null;
+                        brickArr[i][j].isLog = false;
+                    }
+                    destoryCount++;
+                }
+                else {
+                    if (j == 0)
+                        continue;
+                    for (var i = 0; i < brickArr.length; i++) {
+                        if (brickArr[i][j].isLog) {
+                            Laya.Tween.to(brickArr[i][j].Brick, { x: this.getBrickLeft(i), y: this.getBrickTop(j - destoryCount) }, 100);
+                        }
+                    }
+                }
+            }
+            return destoryCount;
+        };
         Bricks.clearCurr = function () {
-            var gameBG = runtime.getGameBGImage();
-            gameBG.destroyChildren();
+            if (currBricks.length > 0) {
+                for (var i = 0; i < currBricks.length; i++) {
+                    currBricks[i].destroy();
+                }
+            }
+            currBricks = [];
             currPositions = [];
             nextPositions = [];
         };

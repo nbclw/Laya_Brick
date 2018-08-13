@@ -19,13 +19,13 @@ var messageHeight = 50;
 var gameAreaWidth = stageWidth - borderWidth;
 var gameAreaHeight = stageHeight - btnHeight - messageHeight;
 //砖块信息数据
-var brickXCount = 16; //游戏区域一横行有多少个
+var brickXCount = 10; //游戏区域一横行有多少个
 var brickSize = gameAreaWidth / brickXCount; //根据屏幕大小计算砖块尺寸（正方形）
 var brickYCount = parseInt((gameAreaHeight / brickSize).toString()) - 1; //计算游戏区域一竖行有多少个
 var bricksCount = 4; //一组砖块的数量
 //砖块初始位置
 var initX = parseInt((brickXCount / 2).toString()) - 1;
-var initY = brickYCount;
+var initY = brickYCount - 5;
 //初始化游戏区域的占用情况
 var brickArr = new Array(brickXCount);
 for (var brx = 0; brx < brickArr.length; brx++) {
