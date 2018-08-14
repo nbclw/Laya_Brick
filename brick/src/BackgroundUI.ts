@@ -31,6 +31,7 @@ module BackgroundUI {
 			BG.addChild(gameBG);
 			
 			let messageBG: Image = new Image(imgsUrl[1]);
+			messageBG.name = 'messageBG';
 			messageBG.width = messageWidth;
 			messageBG.height = messageHeight;
 			messageBG.top = gameAreaHeight;
@@ -42,8 +43,7 @@ module BackgroundUI {
 		}
 
 		private createMessages(): void {
-			let pre: number = 2 / 5;
-			let fontSize: number = messageHeight * pre;
+			let fontSize: number = messageHeight * messageTextPre;
 			let t: Text = new Text();
 			t.text = '得分：';
 			t.fontSize = fontSize;
@@ -58,7 +58,7 @@ module BackgroundUI {
 			score.fontSize = fontSize;
 			score.color = "white";
 			score.bold = true;
-			score.pos((stageWidth - gameAreaWidth) / 2 + messageHeight * t.text.length * pre, gameAreaHeight + (messageHeight - fontSize) / 2);
+			score.pos((stageWidth - gameAreaWidth) / 2 + messageHeight * t.text.length * messageTextPre, gameAreaHeight + (messageHeight - fontSize) / 2);
 			Laya.stage.addChild(score);
 
 			let nextText: Text = new Text();
@@ -66,7 +66,7 @@ module BackgroundUI {
 			nextText.fontSize = fontSize;
 			nextText.color = "white";
 			nextText.bold = true;
-			nextText.pos(stageWidth - ((stageWidth - gameAreaWidth) / 2 + messageHeight * nextText.text.length * pre + messageHeight), gameAreaHeight + (messageHeight - fontSize) / 2);
+			nextText.pos(stageWidth - ((stageWidth - gameAreaWidth) / 2 + messageHeight * nextText.text.length * messageTextPre + messageHeight), gameAreaHeight + (messageHeight - fontSize) / 2);
 			Laya.stage.addChild(nextText);
 		}
 

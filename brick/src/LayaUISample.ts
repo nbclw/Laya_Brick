@@ -11,23 +11,29 @@ const borderWidth = 20;
 //舞台尺寸
 const stageWidth: number = 400;
 const stageHeight: number = 600;
+//游戏速度
+let loopSpeed: number = 800;
+let moveSpeed: number = loopSpeed / 5;
 //按钮尺寸
 const btnWidth: number = 50;
 const btnHeight: number = 50;
+const btnAreaWidth: number = stageWidth - borderWidth;
+const btnAreaHeight: number = 80;
 //游戏信息区域尺寸
 const messageWidth: number = stageWidth - borderWidth;
 const messageHeight: number = 50;
+const messageTextPre = 0.4;
+const messageBricksPre = 0.6;
 //游戏区域尺寸
 const gameAreaWidth: number = stageWidth - borderWidth;
-const gameAreaHeight: number = stageHeight - btnHeight - messageHeight;
+const gameAreaHeight: number = stageHeight - btnAreaHeight - messageHeight;
 //砖块信息数据
-const brickXCount: number = 10;//游戏区域一横行有多少个
+const brickXCount: number = 16;//游戏区域一横行有多少个
 const brickSize: number = gameAreaWidth / brickXCount;//根据屏幕大小计算砖块尺寸（正方形）
 const brickYCount: number = parseInt((gameAreaHeight / brickSize).toString()) - 1;//计算游戏区域一竖行有多少个
-const bricksCount = 4;//一组砖块的数量
 //砖块初始位置
 const initX: number = parseInt((brickXCount / 2).toString()) - 1;
-const initY: number = brickYCount - 5;
+const initY: number = brickYCount - 1;
 //初始化游戏区域的占用情况
 let brickArr: Array<Array<LogBrick>> = new Array(brickXCount);
 for (let brx = 0; brx < brickArr.length; brx++) {
@@ -45,7 +51,6 @@ const imgsUrl: string[] = [
     '../laya/assets/quick.png',
     '../laya/assets/whitebg.png'
 ]
-
 
 
 

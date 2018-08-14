@@ -6,13 +6,14 @@ var GameRuntime;
     var Dialog = Laya.Dialog;
     var Text = Laya.Text;
     var gamerTimer;
-    var loopSpeed = 800;
-    var moveSpeed = loopSpeed / 5;
     var GameRuntime = /** @class */ (function () {
         function GameRuntime() {
         }
         GameRuntime.getGameBGImage = function () {
             return Laya.stage.getChildByName('BG').getChildByName('gameBG');
+        };
+        GameRuntime.getMessageBGImage = function () {
+            return Laya.stage.getChildByName('BG').getChildByName('messageBG');
         };
         GameRuntime.btnLeft_Click = function () {
             BrickControl.move('left', moveSpeed);
@@ -21,12 +22,13 @@ var GameRuntime;
             BrickControl.move('right', moveSpeed);
         };
         GameRuntime.btnChange_Click = function () {
+            BrickControl.changeBricks();
         };
         GameRuntime.btnQuick_Click = function () {
         };
         GameRuntime.gameBegin = function () {
             BrickControl.createNewBricksPostion();
-            //Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
+            Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
         };
         GameRuntime.gameRuning = function () {
             if (!BrickControl.move('down', moveSpeed)) {

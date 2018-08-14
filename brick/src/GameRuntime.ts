@@ -8,8 +8,6 @@ module GameRuntime {
 	import Text = Laya.Text;
 
 	let gamerTimer;
-	let loopSpeed: number = 800;
-	let moveSpeed: number = loopSpeed / 5;
 	export class GameRuntime {
 		constructor() {
 
@@ -17,6 +15,10 @@ module GameRuntime {
 
 		public static getGameBGImage(): Image {
 			return <Image>Laya.stage.getChildByName('BG').getChildByName('gameBG');
+		}
+
+		public static getMessageBGImage(): Image {
+			return <Image>Laya.stage.getChildByName('BG').getChildByName('messageBG');
 		}
 
 		public static btnLeft_Click(): void {
@@ -28,7 +30,7 @@ module GameRuntime {
 		}
 
 		public static btnChange_Click(): void {
-
+			BrickControl.changeBricks();
 		}
 
 		public static btnQuick_Click(): void {
@@ -38,7 +40,7 @@ module GameRuntime {
 
 		public static gameBegin(): void {
 			BrickControl.createNewBricksPostion();
-			//Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
+			Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
 		}
 
 		private static gameRuning(): void {
