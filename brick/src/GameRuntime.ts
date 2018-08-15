@@ -74,8 +74,7 @@ module GameRuntime {
 
 		public static gameBegin(): void {
 			BrickControl.createNewBricksPostion();
-			//Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
-			runtime.GameEnd();
+			Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
 		}
 
 		private static gameRuning(): void {
