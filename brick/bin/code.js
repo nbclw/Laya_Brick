@@ -42271,8 +42271,7 @@ var GameRuntime;
         };
         GameRuntime.gameBegin = function () {
             BrickControl.createNewBricksPostion();
-            //Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
-            runtime.GameEnd();
+            Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
         };
         GameRuntime.gameRuning = function () {
             if (!BrickControl.move('down', moveSpeed)) {
