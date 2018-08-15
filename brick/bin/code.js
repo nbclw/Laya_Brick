@@ -42202,42 +42202,22 @@ if (typeof define === 'function' && define.amd){
     });
 }
 /**
-* Models
-*/
-var Models;
-(function (Models) {
-    var LogBrick = /** @class */ (function () {
-        function LogBrick() {
-            this.isLog = false;
-        }
-        ;
-        return LogBrick;
-    }());
-    Models.LogBrick = LogBrick;
-    var BrickPos = /** @class */ (function () {
-        function BrickPos(_x, _y) {
-            this.x = _x;
-            this.y = _y;
-        }
-        return BrickPos;
-    }());
-    Models.BrickPos = BrickPos;
-})(Models || (Models = {}));
-//# sourceMappingURL=Models.js.map
-/**
 * GameRuntime
 */
 var GameRuntime;
 (function (GameRuntime_1) {
+    var Image = Laya.Image;
     var Dialog = Laya.Dialog;
     var Text = Laya.Text;
     var gamerTimer;
+    var isRuning = true;
     var GameRuntime = /** @class */ (function () {
         function GameRuntime() {
         }
         GameRuntime.getGameBGImage = function () {
             return Laya.stage.getChildByName('BG').getChildByName('gameBG');
         };
+        //移动
         GameRuntime.getMessageBGImage = function () {
             return Laya.stage.getChildByName('BG').getChildByName('messageBG');
         };
@@ -42247,14 +42227,52 @@ var GameRuntime;
         GameRuntime.btnRight_Click = function () {
             BrickControl.move('right', moveSpeed);
         };
+        //暂停/继续
+        GameRuntime.btnParseAndPlay_Click = function (btn) {
+            btn.skin = isRuning ? imgsUrl[7] : imgsUrl[8];
+            isRuning = !isRuning;
+            if (isRuning)
+                runtime.GamePlay();
+            else
+                runtime.GameParse();
+        };
+        //变化
         GameRuntime.btnChange_Click = function () {
             BrickControl.changeBricks();
         };
-        GameRuntime.btnQuick_Click = function () {
+        //加速/减速
+        GameRuntime.btnQuick_Down = function (btn, value, color) {
+            runtime.setButtonSize(btn, value, color);
+            runtime.GameParse();
+            loopSpeed /= 4;
+            runtime.GamePlay();
+        };
+        GameRuntime.btnQuick_Up = function (btn, value, color) {
+            runtime.setButtonSize(btn, value, color);
+            runtime.GameParse();
+            loopSpeed *= 4;
+            runtime.GamePlay();
+        };
+        //按钮按下与弹起
+        GameRuntime.button_Down = function (btn, value, color) {
+            runtime.setButtonSize(btn, value, color);
+        };
+        GameRuntime.button_Up = function (btn, value, color) {
+            runtime.setButtonSize(btn, value, color);
+        };
+        GameRuntime.setButtonSize = function (btn, value, color) {
+            if (color == null || color == undefined || color.length == 0)
+                color = '#000000';
+            btn.width += value;
+            btn.height += value;
+            btn.top -= value / 2;
+            btn.left -= value / 2;
+            btn.labelColors = color;
         };
         GameRuntime.gameBegin = function () {
             BrickControl.createNewBricksPostion();
-            Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
+            //Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
+            runtime.GameEnd();
         };
         GameRuntime.gameRuning = function () {
             if (!BrickControl.move('down', moveSpeed)) {
@@ -42263,22 +42281,34 @@ var GameRuntime;
                     runtime.GameEnd();
             }
         };
-        GameRuntime.GameStop = function () {
+        GameRuntime.GamePlay = function () {
+            Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
+        };
+        GameRuntime.GameParse = function () {
             Laya.timer.clear(gamerTimer, this.gameRuning);
         };
         GameRuntime.GameEnd = function () {
-            Laya.timer.clear(gamerTimer, this.gameRuning);
+            runtime.GameParse();
             var dialog = new Dialog();
-            dialog.width = stageWidth / 3;
-            dialog.height = stageHeight / 10;
+            dialog.width = stageWidth;
+            dialog.height = stageHeight;
             dialog.popupCenter = true;
-            dialog.isModal = true;
+            dialog.alpha = 0.9;
+            var image = new Image(imgsUrl[10]);
+            image.width = dialog.width - borderWidth;
+            image.height = image.width / 6;
+            image.left = borderWidth / 2;
+            image.top = dialog.height * 1 / 4;
             var txt = new Text();
             txt.text = '游戏结束！';
-            txt.fontSize = dialog.width / 10;
+            txt.fontSize = 15;
+            txt.color = "white";
             txt.bold = true;
-            dialog.addChild(txt);
-            dialog.show();
+            txt.x = image.width * 3 / 8;
+            txt.y = image.height * 2 / 5;
+            image.addChild(txt);
+            dialog.addChild(image);
+            dialog.popup();
         };
         return GameRuntime;
     }());
@@ -42291,7 +42321,6 @@ var GameRuntime;
 var Bricks;
 (function (Bricks_1) {
     var Image = Laya.Image;
-    var BrickPos = Models.BrickPos;
     var currPositions = new Array();
     var nextPositions = new Array();
     var changePositions = new Array();
@@ -42349,7 +42378,7 @@ var Bricks;
         Bricks.drawNextBricks = function () {
             var postions = this.getPostionByRandom(nextRandom); //获取相对坐标
             var messageBG = runtime.getMessageBGImage();
-            var bricksAreaCount = 3;
+            var bricksAreaCount = 4;
             var size = messageHeight * messageBricksPre / bricksAreaCount;
             if (nextBricks.length == 0) {
                 for (var i = 0; i < postions.length; i++) {
@@ -42498,10 +42527,10 @@ var Bricks;
             }
         };
         Bricks.mathScore = function () {
-            var destoryLines = this.getDestoryLines();
+            var lines = this.getDestoryLines();
             var destoryCount = 0;
-            if (destoryLines.length > 0) {
-                destoryCount = this.destoryLines(destoryLines);
+            if (lines.length > 0) {
+                destoryCount = this.destoryLines(lines);
                 var score = Laya.stage.getChildByName('score');
                 var value = parseInt(score.text);
                 value += Math.pow(2, destoryCount) * brickXCount;
@@ -42509,7 +42538,7 @@ var Bricks;
             }
         };
         Bricks.getDestoryLines = function () {
-            var destoryLines = [];
+            var lines = [];
             for (var j = 0; j < brickArr[0].length; j++) {
                 var b = true;
                 for (var i = 0; i < brickArr.length; i++) {
@@ -42519,14 +42548,14 @@ var Bricks;
                     }
                 }
                 if (b)
-                    destoryLines.push(j);
+                    lines.push(j);
             }
-            return destoryLines;
+            return lines;
         };
-        Bricks.destoryLines = function (destoryLines) {
+        Bricks.destoryLines = function (lines) {
             var destoryCount = 0;
             for (var j = 0; j < brickArr[0].length; j++) {
-                if (destoryLines.indexOf(j) > -1) {
+                if (lines.indexOf(j) > -1) {
                     for (var i = 0; i < brickArr.length; i++) {
                         brickArr[i][j].Brick.destroy();
                         brickArr[i][j].Brick = null;
@@ -42537,13 +42566,13 @@ var Bricks;
                 else {
                     if (j == 0)
                         continue;
+                    var nextJ = j;
+                    nextJ -= destoryCount;
                     for (var i = 0; i < brickArr.length; i++) {
                         if (brickArr[i][j].isLog) {
-                            var nextJ = j;
-                            nextJ -= destoryCount;
                             Laya.Tween.to(brickArr[i][j].Brick, { x: this.getBrickLeft(i), y: this.getBrickTop(nextJ) }, 100);
                             brickArr[i][nextJ].Brick = brickArr[i][j].Brick;
-                            brickArr[i][nextJ].isLog = true;
+                            brickArr[i][nextJ].isLog = brickArr[i][j].isLog;
                             brickArr[i][j].Brick = null;
                             brickArr[i][j].isLog = false;
                         }
@@ -42668,6 +42697,29 @@ var Bricks;
     Bricks_1.Bricks = Bricks;
 })(Bricks || (Bricks = {}));
 //# sourceMappingURL=Bricks.js.map
+/**
+* Models
+*/
+var Models;
+(function (Models) {
+    var LogBrick = /** @class */ (function () {
+        function LogBrick() {
+            this.isLog = false;
+        }
+        ;
+        return LogBrick;
+    }());
+    Models.LogBrick = LogBrick;
+    var BrickPos = /** @class */ (function () {
+        function BrickPos(_x, _y) {
+            this.x = _x;
+            this.y = _y;
+        }
+        return BrickPos;
+    }());
+    Models.BrickPos = BrickPos;
+})(Models || (Models = {}));
+//# sourceMappingURL=Models.js.map
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -42747,39 +42799,83 @@ var BackgroundUI;
             Laya.stage.addChild(nextText);
         };
         BackgroundUI.prototype.createButtons = function () {
-            var btnLeft = new Button(imgsUrl[3]);
+            var btnCount = 5;
+            var btnMargin = btnDefaultWidth / 5;
+            var empryAreaWidth = 0;
+            var defaultBtnAreaWidth = (btnDefaultWidth * 6 / 5) * btnCount;
+            if (btnAreaWidth >= defaultBtnAreaWidth) {
+                btnWidth = btnDefaultWidth;
+                empryAreaWidth = (btnAreaWidth - defaultBtnAreaWidth) / 2;
+            }
+            else {
+                var width = btnAreaWidth / btnCount;
+                btnMargin = width / 6;
+                btnWidth = btnMargin * 5;
+            }
+            console.log(btnMargin);
+            var btnLeft = new Button(imgsUrl[9]);
             btnLeft.width = btnWidth;
             btnLeft.height = btnHeight;
             btnLeft.stateNum = 1;
-            btnLeft.scaleX = -1;
-            btnLeft.top = gameAreaHeight + messageHeight;
-            btnLeft.left = (stageWidth - gameAreaWidth) / 2 + btnWidth;
+            btnLeft.top = gameAreaHeight + messageHeight + btnMargin;
+            btnLeft.left = borderWidth / 2 + empryAreaWidth + btnMargin;
             btnLeft.clickHandler = Handler.create(btnLeft, runtime.btnLeft_Click, [], false);
+            this.bindButtonEvent(btnLeft, btnMargin);
             Laya.stage.addChild(btnLeft);
             var btnRight = new Button(imgsUrl[3]);
             btnRight.width = btnWidth;
             btnRight.height = btnHeight;
             btnRight.stateNum = 1;
-            btnRight.top = gameAreaHeight + messageHeight;
-            btnRight.left = (stageWidth - gameAreaWidth) / 2 + btnWidth;
+            btnRight.top = gameAreaHeight + messageHeight + btnMargin;
+            btnRight.left = borderWidth / 2 + empryAreaWidth + btnMargin + (btnWidth + btnMargin);
             btnRight.clickHandler = Handler.create(btnRight, runtime.btnRight_Click, [1], false);
+            this.bindButtonEvent(btnRight, btnMargin);
             Laya.stage.addChild(btnRight);
+            var btnParseAndPlay = new Button(imgsUrl[8]);
+            btnParseAndPlay.width = btnWidth;
+            btnParseAndPlay.height = btnHeight;
+            btnParseAndPlay.stateNum = 1;
+            btnParseAndPlay.top = gameAreaHeight + messageHeight + btnMargin;
+            btnParseAndPlay.left = borderWidth / 2 + empryAreaWidth + btnMargin + (btnWidth + btnMargin) * 2;
+            btnParseAndPlay.clickHandler = Handler.create(btnParseAndPlay, runtime.btnParseAndPlay_Click, [btnParseAndPlay], false);
+            this.bindButtonEvent(btnParseAndPlay, btnMargin);
+            Laya.stage.addChild(btnParseAndPlay);
             var btnChange = new Button(imgsUrl[4]);
+            btnChange.label = '变化';
+            btnChange.labelBold = true;
+            btnChange.labelColors = '#934927';
             btnChange.width = btnWidth;
             btnChange.height = btnHeight;
             btnChange.stateNum = 1;
-            btnChange.top = gameAreaHeight + messageHeight;
-            btnChange.right = (stageWidth - gameAreaWidth) / 2 + btnWidth;
+            btnChange.top = gameAreaHeight + messageHeight + btnMargin;
+            btnChange.left = borderWidth / 2 + empryAreaWidth + btnMargin + (btnWidth + btnMargin) * 3;
             btnChange.clickHandler = Handler.create(btnChange, runtime.btnChange_Click, [], false);
+            this.bindButtonEvent(btnChange, btnMargin);
             Laya.stage.addChild(btnChange);
             var btnQuick = new Button(imgsUrl[5]);
+            btnQuick.label = '快速';
+            btnQuick.labelBold = true;
+            btnQuick.labelColors = '#934927';
             btnQuick.width = btnWidth;
             btnQuick.height = btnHeight;
             btnQuick.stateNum = 1;
-            btnQuick.top = gameAreaHeight + messageHeight;
-            btnQuick.right = (stageWidth - gameAreaWidth) / 2;
-            btnQuick.clickHandler = Handler.create(btnQuick, runtime.btnQuick_Click, [], false);
+            btnQuick.top = gameAreaHeight + messageHeight + btnMargin;
+            btnQuick.left = borderWidth / 2 + empryAreaWidth + btnMargin + (btnWidth + btnMargin) * 4;
+            btnQuick.on(Laya.Event.MOUSE_DOWN, btnQuick, runtime.btnQuick_Down, [btnQuick, btnMargin / 2, '#000000']);
+            btnQuick.on(Laya.Event.MOUSE_UP, btnQuick, runtime.btnQuick_Up, [btnQuick, btnMargin / -2, '#934927']);
             Laya.stage.addChild(btnQuick);
+            // let btnDown: Button = new Button(imgsUrl[10]);
+            // btnDown.width = btnWidth;
+            // btnDown.height = btnHeight;
+            // btnDown.stateNum = 1;
+            // btnDown.top = gameAreaHeight + messageHeight + btnMargin;
+            // btnDown.left = borderWidth / 2 + empryAreaWidth + btnMargin + (btnWidth + btnMargin) * 5;
+            // this.bindButtonEvent(btnDown, btnMargin);
+            // Laya.stage.addChild(btnDown);
+        };
+        BackgroundUI.prototype.bindButtonEvent = function (btn, btnMargin) {
+            btn.on(Laya.Event.MOUSE_DOWN, btn, runtime.button_Down, [btn, btnMargin / 2, '#000000']);
+            btn.on(Laya.Event.MOUSE_UP, btn, runtime.button_Up, [btn, btnMargin / -2, '#934927']);
         };
         return BackgroundUI;
     }(laya.ui.View));
@@ -42788,8 +42884,9 @@ var BackgroundUI;
 //# sourceMappingURL=BackgroundUI.js.map
 var WebGL = Laya.WebGL;
 var Handler = Laya.Handler;
-var LogBrick = Models.LogBrick;
 /**自定义的 */
+var BrickPos = Models.BrickPos;
+var LogBrick = Models.LogBrick;
 var BG = BackgroundUI.BackgroundUI;
 var BrickControl = Bricks.Bricks;
 var runtime = GameRuntime.GameRuntime;
@@ -42801,6 +42898,8 @@ var stageHeight = 600;
 var loopSpeed = 800;
 var moveSpeed = loopSpeed / 5;
 //按钮尺寸
+var btnDefaultWidth = 50;
+var btnDefaultHeight = 50;
 var btnWidth = 50;
 var btnHeight = 50;
 var btnAreaWidth = stageWidth - borderWidth;
@@ -42832,10 +42931,14 @@ var imgsUrl = [
     '../laya/assets/bg.png',
     '../laya/assets/bluebg.png',
     '../laya/assets/brick.png',
-    '../laya/assets/button.png',
+    '../laya/assets/right.png',
     '../laya/assets/change.png',
     '../laya/assets/quick.png',
-    '../laya/assets/whitebg.png'
+    '../laya/assets/whitebg.png',
+    '../laya/assets/parse.png',
+    '../laya/assets/play.png',
+    '../laya/assets/left.png',
+    '../laya/assets/gameover.png'
 ];
 var Main = /** @class */ (function () {
     function Main() {

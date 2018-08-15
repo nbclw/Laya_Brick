@@ -3,7 +3,6 @@
 */
 module Bricks {
 	import Image = Laya.Image;
-	import BrickPos = Models.BrickPos;
 	import Text = Laya.Text;
 
 	let currPositions: BrickPos[] = new Array();
@@ -67,7 +66,7 @@ module Bricks {
 		private static drawNextBricks(): void {
 			let postions = this.getPostionByRandom(nextRandom);//获取相对坐标
 			let messageBG: Image = runtime.getMessageBGImage();
-			let bricksAreaCount: number = 3;
+			let bricksAreaCount: number = 4;
 			let size: number = messageHeight * messageBricksPre / bricksAreaCount;
 			if (nextBricks.length == 0) {
 				for (let i = 0; i < postions.length; i++) {
@@ -214,10 +213,10 @@ module Bricks {
 			}
 		}
 		private static mathScore(): void {
-			let destoryLines: number[] = this.getDestoryLines();
+			let lines: number[] = this.getDestoryLines();
 			let destoryCount: number = 0;
-			if (destoryLines.length > 0) {
-				destoryCount = this.destoryLines(destoryLines);
+			if (lines.length > 0) {
+				destoryCount = this.destoryLines(lines);
 				let score: Text = <Text>Laya.stage.getChildByName('score');
 				let value: number = parseInt(score.text);
 				value += Math.pow(2, destoryCount) * brickXCount;
@@ -226,7 +225,7 @@ module Bricks {
 			}
 		}
 		private static getDestoryLines(): number[] {
-			let destoryLines: number[] = [];
+			let lines: number[] = [];
 			for (let j: number = 0; j < brickArr[0].length; j++) {
 				let b: boolean = true;
 				for (let i: number = 0; i < brickArr.length; i++) {
@@ -235,15 +234,15 @@ module Bricks {
 						break;
 					}
 				}
-				if (b) destoryLines.push(j);
+				if (b) lines.push(j);
 			}
 
-			return destoryLines;
+			return lines;
 		}
-		private static destoryLines(destoryLines: number[]): number {
+		private static destoryLines(lines: number[]): number {
 			let destoryCount: number = 0;
 			for (let j: number = 0; j < brickArr[0].length; j++) {
-				if (destoryLines.indexOf(j) > -1) {
+				if (lines.indexOf(j) > -1) {
 					for (let i: number = 0; i < brickArr.length; i++) {
 						brickArr[i][j].Brick.destroy();
 						brickArr[i][j].Brick = null;
@@ -252,17 +251,18 @@ module Bricks {
 					destoryCount++;
 				} else {
 					if (j == 0) continue;
+					let nextJ: number = j;
+					nextJ -= destoryCount;
+
 					for (let i: number = 0; i < brickArr.length; i++) {
 						if (brickArr[i][j].isLog) {
-							let nextJ: number = j;
-							nextJ -= destoryCount;
 							Laya.Tween.to(
 								brickArr[i][j].Brick,
 								{ x: this.getBrickLeft(i), y: this.getBrickTop(nextJ) },
 								100
 							);
 							brickArr[i][nextJ].Brick = brickArr[i][j].Brick;
-							brickArr[i][nextJ].isLog = true;
+							brickArr[i][nextJ].isLog = brickArr[i][j].isLog;
 							brickArr[i][j].Brick = null;
 							brickArr[i][j].isLog = false;
 						}

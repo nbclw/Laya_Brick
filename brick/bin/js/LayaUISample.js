@@ -1,7 +1,8 @@
 var WebGL = Laya.WebGL;
 var Handler = Laya.Handler;
-var LogBrick = Models.LogBrick;
 /**自定义的 */
+var BrickPos = Models.BrickPos;
+var LogBrick = Models.LogBrick;
 var BG = BackgroundUI.BackgroundUI;
 var BrickControl = Bricks.Bricks;
 var runtime = GameRuntime.GameRuntime;
@@ -13,6 +14,8 @@ var stageHeight = 600;
 var loopSpeed = 800;
 var moveSpeed = loopSpeed / 5;
 //按钮尺寸
+var btnDefaultWidth = 50;
+var btnDefaultHeight = 50;
 var btnWidth = 50;
 var btnHeight = 50;
 var btnAreaWidth = stageWidth - borderWidth;
@@ -44,10 +47,14 @@ var imgsUrl = [
     '../laya/assets/bg.png',
     '../laya/assets/bluebg.png',
     '../laya/assets/brick.png',
-    '../laya/assets/button.png',
+    '../laya/assets/right.png',
     '../laya/assets/change.png',
     '../laya/assets/quick.png',
-    '../laya/assets/whitebg.png'
+    '../laya/assets/whitebg.png',
+    '../laya/assets/parse.png',
+    '../laya/assets/play.png',
+    '../laya/assets/left.png',
+    '../laya/assets/gameover.png'
 ];
 var Main = /** @class */ (function () {
     function Main() {

@@ -1,8 +1,9 @@
 import WebGL = Laya.WebGL;
 import Handler = Laya.Handler;
-import LogBrick = Models.LogBrick;
 
 /**自定义的 */
+import BrickPos = Models.BrickPos;
+import LogBrick = Models.LogBrick;
 import BG = BackgroundUI.BackgroundUI;
 import BrickControl = Bricks.Bricks;
 import runtime = GameRuntime.GameRuntime;
@@ -15,15 +16,17 @@ const stageHeight: number = 600;
 let loopSpeed: number = 800;
 let moveSpeed: number = loopSpeed / 5;
 //按钮尺寸
-const btnWidth: number = 50;
-const btnHeight: number = 50;
+const btnDefaultWidth: number = 50;
+const btnDefaultHeight: number = 50;
+let btnWidth: number = 50;
+let btnHeight: number = 50;
 const btnAreaWidth: number = stageWidth - borderWidth;
 const btnAreaHeight: number = 80;
 //游戏信息区域尺寸
 const messageWidth: number = stageWidth - borderWidth;
 const messageHeight: number = 50;
 const messageTextPre = 0.4;
-const messageBricksPre = 0.6;
+const messageBricksPre = 0.8;
 //游戏区域尺寸
 const gameAreaWidth: number = stageWidth - borderWidth;
 const gameAreaHeight: number = stageHeight - btnAreaHeight - messageHeight;
@@ -46,10 +49,14 @@ const imgsUrl: string[] = [
     '../laya/assets/bg.png',
     '../laya/assets/bluebg.png',
     '../laya/assets/brick.png',
-    '../laya/assets/button.png',
+    '../laya/assets/right.png',
     '../laya/assets/change.png',
     '../laya/assets/quick.png',
-    '../laya/assets/whitebg.png'
+    '../laya/assets/whitebg.png',
+    '../laya/assets/parse.png',
+    '../laya/assets/play.png',
+    '../laya/assets/left.png',
+    '../laya/assets/gameover.png'
 ]
 
 

@@ -4,7 +4,6 @@
 var Bricks;
 (function (Bricks_1) {
     var Image = Laya.Image;
-    var BrickPos = Models.BrickPos;
     var currPositions = new Array();
     var nextPositions = new Array();
     var changePositions = new Array();
@@ -62,7 +61,7 @@ var Bricks;
         Bricks.drawNextBricks = function () {
             var postions = this.getPostionByRandom(nextRandom); //获取相对坐标
             var messageBG = runtime.getMessageBGImage();
-            var bricksAreaCount = 3;
+            var bricksAreaCount = 4;
             var size = messageHeight * messageBricksPre / bricksAreaCount;
             if (nextBricks.length == 0) {
                 for (var i = 0; i < postions.length; i++) {
@@ -211,10 +210,10 @@ var Bricks;
             }
         };
         Bricks.mathScore = function () {
-            var destoryLines = this.getDestoryLines();
+            var lines = this.getDestoryLines();
             var destoryCount = 0;
-            if (destoryLines.length > 0) {
-                destoryCount = this.destoryLines(destoryLines);
+            if (lines.length > 0) {
+                destoryCount = this.destoryLines(lines);
                 var score = Laya.stage.getChildByName('score');
                 var value = parseInt(score.text);
                 value += Math.pow(2, destoryCount) * brickXCount;
@@ -222,7 +221,7 @@ var Bricks;
             }
         };
         Bricks.getDestoryLines = function () {
-            var destoryLines = [];
+            var lines = [];
             for (var j = 0; j < brickArr[0].length; j++) {
                 var b = true;
                 for (var i = 0; i < brickArr.length; i++) {
@@ -232,14 +231,14 @@ var Bricks;
                     }
                 }
                 if (b)
-                    destoryLines.push(j);
+                    lines.push(j);
             }
-            return destoryLines;
+            return lines;
         };
-        Bricks.destoryLines = function (destoryLines) {
+        Bricks.destoryLines = function (lines) {
             var destoryCount = 0;
             for (var j = 0; j < brickArr[0].length; j++) {
-                if (destoryLines.indexOf(j) > -1) {
+                if (lines.indexOf(j) > -1) {
                     for (var i = 0; i < brickArr.length; i++) {
                         brickArr[i][j].Brick.destroy();
                         brickArr[i][j].Brick = null;
@@ -250,13 +249,13 @@ var Bricks;
                 else {
                     if (j == 0)
                         continue;
+                    var nextJ = j;
+                    nextJ -= destoryCount;
                     for (var i = 0; i < brickArr.length; i++) {
                         if (brickArr[i][j].isLog) {
-                            var nextJ = j;
-                            nextJ -= destoryCount;
                             Laya.Tween.to(brickArr[i][j].Brick, { x: this.getBrickLeft(i), y: this.getBrickTop(nextJ) }, 100);
                             brickArr[i][nextJ].Brick = brickArr[i][j].Brick;
-                            brickArr[i][nextJ].isLog = true;
+                            brickArr[i][nextJ].isLog = brickArr[i][j].isLog;
                             brickArr[i][j].Brick = null;
                             brickArr[i][j].isLog = false;
                         }
