@@ -140,6 +140,7 @@ module BackgroundUI {
 			btnQuick.left = borderWidth / 2 + empryAreaWidth + btnMargin + (btnWidth + btnMargin) * 4;
 			btnQuick.on(Laya.Event.MOUSE_DOWN, btnQuick, runtime.btnQuick_Down, [btnQuick, btnMargin / 2, '#000000']);
 			btnQuick.on(Laya.Event.MOUSE_UP, btnQuick, runtime.btnQuick_Up, [btnQuick, btnMargin / -2, '#934927']);
+			btnQuick.on(Laya.Event.MOUSE_OUT, btnQuick, runtime.btnQuick_Up, [btnQuick, btnMargin / -2, '#934927']);
 			Laya.stage.addChild(btnQuick);
 
 			// let btnDown: Button = new Button(imgsUrl[10]);
@@ -154,6 +155,7 @@ module BackgroundUI {
 		private bindButtonEvent(btn: Button, btnMargin: number): void {
 			btn.on(Laya.Event.MOUSE_DOWN, btn, runtime.button_Down, [btn, btnMargin / 2, '#000000']);
 			btn.on(Laya.Event.MOUSE_UP, btn, runtime.button_Up, [btn, btnMargin / -2, '#934927']);
+			btn.on(Laya.Event.MOUSE_OUT, btn, runtime.button_Up, [btn, btnMargin / -2, '#934927']);
 		}
 	}
 }

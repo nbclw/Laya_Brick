@@ -77,3 +77,8 @@ Laya.MiniAdpter.init();
 Laya.init(stageWidth, stageHeight, WebGL);
 
 new Main();
+
+
+//'portrait'
+//window.innerWidth
+//window.innerHeight

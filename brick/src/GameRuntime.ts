@@ -34,7 +34,7 @@ module GameRuntime {
 			btn.skin = isRuning ? imgsUrl[7] : imgsUrl[8];
 			isRuning = !isRuning;
 			if (isRuning)
-				runtime.GamePlay();
+				runtime.GamePlay(loopSpeed);
 			else
 				runtime.GameParse();
 		}
@@ -46,14 +46,12 @@ module GameRuntime {
 		public static btnQuick_Down(btn: Button, value: number, color?: string): void {
 			runtime.setButtonSize(btn, value, color);
 			runtime.GameParse();
-			loopSpeed /= 4;
-			runtime.GamePlay();
+			runtime.GamePlay(loopSpeed / 4);
 		}
 		public static btnQuick_Up(btn: Button, value: number, color?: string): void {
 			runtime.setButtonSize(btn, value, color);
 			runtime.GameParse();
-			loopSpeed *= 4;
-			runtime.GamePlay();
+			runtime.GamePlay(loopSpeed);
 		}
 		//按钮按下与弹起
 		public static button_Down(btn: Button, value: number, color?: string): void {
@@ -85,8 +83,8 @@ module GameRuntime {
 			}
 		}
 
-		public static GamePlay(): void {
-			Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
+		public static GamePlay(speed: number): void {
+			Laya.timer.loop(speed, gamerTimer, this.gameRuning);
 		}
 
 		public static GameParse(): void {

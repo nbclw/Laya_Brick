@@ -71,4 +71,7 @@ Laya.MiniAdpter.init();
 //程序入口
 Laya.init(stageWidth, stageHeight, WebGL);
 new Main();
+//'portrait'
+//window.innerWidth
+//window.innerHeight
 //# sourceMappingURL=LayaUISample.js.map

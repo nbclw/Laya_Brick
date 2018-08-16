@@ -42232,7 +42232,7 @@ var GameRuntime;
             btn.skin = isRuning ? imgsUrl[7] : imgsUrl[8];
             isRuning = !isRuning;
             if (isRuning)
-                runtime.GamePlay();
+                runtime.GamePlay(loopSpeed);
             else
                 runtime.GameParse();
         };
@@ -42244,14 +42244,12 @@ var GameRuntime;
         GameRuntime.btnQuick_Down = function (btn, value, color) {
             runtime.setButtonSize(btn, value, color);
             runtime.GameParse();
-            loopSpeed /= 4;
-            runtime.GamePlay();
+            runtime.GamePlay(loopSpeed / 4);
         };
         GameRuntime.btnQuick_Up = function (btn, value, color) {
             runtime.setButtonSize(btn, value, color);
             runtime.GameParse();
-            loopSpeed *= 4;
-            runtime.GamePlay();
+            runtime.GamePlay(loopSpeed);
         };
         //按钮按下与弹起
         GameRuntime.button_Down = function (btn, value, color) {
@@ -42280,8 +42278,8 @@ var GameRuntime;
                     runtime.GameEnd();
             }
         };
-        GameRuntime.GamePlay = function () {
-            Laya.timer.loop(loopSpeed, gamerTimer, this.gameRuning);
+        GameRuntime.GamePlay = function (speed) {
+            Laya.timer.loop(speed, gamerTimer, this.gameRuning);
         };
         GameRuntime.GameParse = function () {
             Laya.timer.clear(gamerTimer, this.gameRuning);
@@ -42862,6 +42860,7 @@ var BackgroundUI;
             btnQuick.left = borderWidth / 2 + empryAreaWidth + btnMargin + (btnWidth + btnMargin) * 4;
             btnQuick.on(Laya.Event.MOUSE_DOWN, btnQuick, runtime.btnQuick_Down, [btnQuick, btnMargin / 2, '#000000']);
             btnQuick.on(Laya.Event.MOUSE_UP, btnQuick, runtime.btnQuick_Up, [btnQuick, btnMargin / -2, '#934927']);
+            btnQuick.on(Laya.Event.MOUSE_OUT, btnQuick, runtime.btnQuick_Up, [btnQuick, btnMargin / -2, '#934927']);
             Laya.stage.addChild(btnQuick);
             // let btnDown: Button = new Button(imgsUrl[10]);
             // btnDown.width = btnWidth;
@@ -42875,6 +42874,7 @@ var BackgroundUI;
         BackgroundUI.prototype.bindButtonEvent = function (btn, btnMargin) {
             btn.on(Laya.Event.MOUSE_DOWN, btn, runtime.button_Down, [btn, btnMargin / 2, '#000000']);
             btn.on(Laya.Event.MOUSE_UP, btn, runtime.button_Up, [btn, btnMargin / -2, '#934927']);
+            btn.on(Laya.Event.MOUSE_OUT, btn, runtime.button_Up, [btn, btnMargin / -2, '#934927']);
         };
         return BackgroundUI;
     }(laya.ui.View));
@@ -42954,4 +42954,7 @@ Laya.MiniAdpter.init();
 //程序入口
 Laya.init(stageWidth, stageHeight, WebGL);
 new Main();
+//'portrait'
+//window.innerWidth
+//window.innerHeight
 //# sourceMappingURL=LayaUISample.js.map
