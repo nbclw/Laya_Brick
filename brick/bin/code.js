@@ -42241,21 +42241,26 @@ var GameRuntime;
             BrickControl.changeBricks();
         };
         //加速/减速
-        GameRuntime.btnQuick_Down = function (btn, value, color) {
-            runtime.setButtonSize(btn, value, color);
-            runtime.GameParse();
-            runtime.GamePlay(loopSpeed / 4);
+        GameRuntime.btnQuick_Down = function (btns, value, color) {
+            runtime.quickDownAndOut(btns, value, loopSpeed / 4, color);
         };
-        GameRuntime.btnQuick_Up = function (btn, value, color) {
-            runtime.setButtonSize(btn, value, color);
+        GameRuntime.btnQuick_Out = function (btns, value, color) {
+            runtime.quickDownAndOut(btns, value, loopSpeed, color);
+        };
+        GameRuntime.quickDownAndOut = function (btns, value, speed, color) {
+            if (!isRuning) {
+                btns[1].skin = imgsUrl[7];
+                isRuning = true;
+            }
+            runtime.setButtonSize(btns[0], value, color);
             runtime.GameParse();
-            runtime.GamePlay(loopSpeed);
+            runtime.GamePlay(speed);
         };
         //按钮按下与弹起
         GameRuntime.button_Down = function (btn, value, color) {
             runtime.setButtonSize(btn, value, color);
         };
-        GameRuntime.button_Up = function (btn, value, color) {
+        GameRuntime.button_Out = function (btn, value, color) {
             runtime.setButtonSize(btn, value, color);
         };
         GameRuntime.setButtonSize = function (btn, value, color) {
@@ -42858,9 +42863,8 @@ var BackgroundUI;
             btnQuick.stateNum = 1;
             btnQuick.top = gameAreaHeight + messageHeight + btnMargin;
             btnQuick.left = borderWidth / 2 + empryAreaWidth + btnMargin + (btnWidth + btnMargin) * 4;
-            btnQuick.on(Laya.Event.MOUSE_DOWN, btnQuick, runtime.btnQuick_Down, [btnQuick, btnMargin / 2, '#000000']);
-            btnQuick.on(Laya.Event.MOUSE_UP, btnQuick, runtime.btnQuick_Up, [btnQuick, btnMargin / -2, '#934927']);
-            btnQuick.on(Laya.Event.MOUSE_OUT, btnQuick, runtime.btnQuick_Up, [btnQuick, btnMargin / -2, '#934927']);
+            btnQuick.on(Laya.Event.MOUSE_DOWN, btnQuick, runtime.btnQuick_Down, [[btnQuick, btnParseAndPlay], btnMargin / 2, '#000000']);
+            btnQuick.on(Laya.Event.MOUSE_OUT, btnQuick, runtime.btnQuick_Out, [[btnQuick, btnParseAndPlay], btnMargin / -2, '#934927']);
             Laya.stage.addChild(btnQuick);
             // let btnDown: Button = new Button(imgsUrl[10]);
             // btnDown.width = btnWidth;
@@ -42873,8 +42877,7 @@ var BackgroundUI;
         };
         BackgroundUI.prototype.bindButtonEvent = function (btn, btnMargin) {
             btn.on(Laya.Event.MOUSE_DOWN, btn, runtime.button_Down, [btn, btnMargin / 2, '#000000']);
-            btn.on(Laya.Event.MOUSE_UP, btn, runtime.button_Up, [btn, btnMargin / -2, '#934927']);
-            btn.on(Laya.Event.MOUSE_OUT, btn, runtime.button_Up, [btn, btnMargin / -2, '#934927']);
+            btn.on(Laya.Event.MOUSE_OUT, btn, runtime.button_Out, [btn, btnMargin / -2, '#934927']);
         };
         return BackgroundUI;
     }(laya.ui.View));

@@ -38,21 +38,26 @@ var GameRuntime;
             BrickControl.changeBricks();
         };
         //加速/减速
-        GameRuntime.btnQuick_Down = function (btn, value, color) {
-            runtime.setButtonSize(btn, value, color);
-            runtime.GameParse();
-            runtime.GamePlay(loopSpeed / 4);
+        GameRuntime.btnQuick_Down = function (btns, value, color) {
+            runtime.quickDownAndOut(btns, value, loopSpeed / 4, color);
         };
-        GameRuntime.btnQuick_Up = function (btn, value, color) {
-            runtime.setButtonSize(btn, value, color);
+        GameRuntime.btnQuick_Out = function (btns, value, color) {
+            runtime.quickDownAndOut(btns, value, loopSpeed, color);
+        };
+        GameRuntime.quickDownAndOut = function (btns, value, speed, color) {
+            if (!isRuning) {
+                btns[1].skin = imgsUrl[7];
+                isRuning = true;
+            }
+            runtime.setButtonSize(btns[0], value, color);
             runtime.GameParse();
-            runtime.GamePlay(loopSpeed);
+            runtime.GamePlay(speed);
         };
         //按钮按下与弹起
         GameRuntime.button_Down = function (btn, value, color) {
             runtime.setButtonSize(btn, value, color);
         };
-        GameRuntime.button_Up = function (btn, value, color) {
+        GameRuntime.button_Out = function (btn, value, color) {
             runtime.setButtonSize(btn, value, color);
         };
         GameRuntime.setButtonSize = function (btn, value, color) {

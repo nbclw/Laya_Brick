@@ -43,21 +43,26 @@ module GameRuntime {
 			BrickControl.changeBricks();
 		}
 		//加速/减速
-		public static btnQuick_Down(btn: Button, value: number, color?: string): void {
-			runtime.setButtonSize(btn, value, color);
-			runtime.GameParse();
-			runtime.GamePlay(loopSpeed / 4);
+		public static btnQuick_Down(btns: Button[], value: number, color?: string): void {
+			runtime.quickDownAndOut(btns, value, loopSpeed / 4, color);
 		}
-		public static btnQuick_Up(btn: Button, value: number, color?: string): void {
-			runtime.setButtonSize(btn, value, color);
+		public static btnQuick_Out(btns: Button[], value: number, color?: string): void {
+			runtime.quickDownAndOut(btns, value, loopSpeed, color);
+		}
+		private static quickDownAndOut(btns: Button[], value: number, speed: number, color?: string): void {
+			if (!isRuning) {
+				btns[1].skin = imgsUrl[8];
+				isRuning = true;
+			}
+			runtime.setButtonSize(btns[0], value, color);
 			runtime.GameParse();
-			runtime.GamePlay(loopSpeed);
+			runtime.GamePlay(speed);
 		}
 		//按钮按下与弹起
 		public static button_Down(btn: Button, value: number, color?: string): void {
 			runtime.setButtonSize(btn, value, color);
 		}
-		public static button_Up(btn: Button, value: number, color?: string): void {
+		public static button_Out(btn: Button, value: number, color?: string): void {
 			runtime.setButtonSize(btn, value, color);
 		}
 		private static setButtonSize(btn: Button, value: number, color?: string): void {
