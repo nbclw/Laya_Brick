@@ -46,7 +46,7 @@ var GameRuntime;
         };
         GameRuntime.quickDownAndOut = function (btns, value, speed, color) {
             if (!isRuning) {
-                btns[1].skin = imgsUrl[7];
+                btns[1].skin = imgsUrl[8];
                 isRuning = true;
             }
             runtime.setButtonSize(btns[0], value, color);

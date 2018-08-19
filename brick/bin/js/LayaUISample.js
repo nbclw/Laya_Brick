@@ -7,9 +7,9 @@ var BG = BackgroundUI.BackgroundUI;
 var BrickControl = Bricks.Bricks;
 var runtime = GameRuntime.GameRuntime;
 var borderWidth = 20;
-//舞台尺寸
-var stageWidth = 400;
-var stageHeight = 600;
+//舞台尺
+var stageWidth = window.innerWidth;
+var stageHeight = window.innerHeight;
 //游戏速度
 var loopSpeed = 800;
 var moveSpeed = loopSpeed / 5;

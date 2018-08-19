@@ -254,11 +254,11 @@ var Bricks;
                     for (var i = 0; i < brickArr.length; i++) {
                         if (brickArr[i][j].isLog) {
                             Laya.Tween.to(brickArr[i][j].Brick, { x: this.getBrickLeft(i), y: this.getBrickTop(nextJ) }, 100);
-                            brickArr[i][nextJ].Brick = brickArr[i][j].Brick;
-                            brickArr[i][nextJ].isLog = brickArr[i][j].isLog;
-                            brickArr[i][j].Brick = null;
-                            brickArr[i][j].isLog = false;
                         }
+                        brickArr[i][nextJ].Brick = brickArr[i][j].Brick;
+                        brickArr[i][nextJ].isLog = brickArr[i][j].isLog;
+                        brickArr[i][j].Brick = null;
+                        brickArr[i][j].isLog = false;
                     }
                 }
             }

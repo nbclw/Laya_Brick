@@ -42202,6 +42202,29 @@ if (typeof define === 'function' && define.amd){
     });
 }
 /**
+* Models
+*/
+var Models;
+(function (Models) {
+    var LogBrick = /** @class */ (function () {
+        function LogBrick() {
+            this.isLog = false;
+        }
+        ;
+        return LogBrick;
+    }());
+    Models.LogBrick = LogBrick;
+    var BrickPos = /** @class */ (function () {
+        function BrickPos(_x, _y) {
+            this.x = _x;
+            this.y = _y;
+        }
+        return BrickPos;
+    }());
+    Models.BrickPos = BrickPos;
+})(Models || (Models = {}));
+//# sourceMappingURL=Models.js.map
+/**
 * GameRuntime
 */
 var GameRuntime;
@@ -42249,7 +42272,7 @@ var GameRuntime;
         };
         GameRuntime.quickDownAndOut = function (btns, value, speed, color) {
             if (!isRuning) {
-                btns[1].skin = imgsUrl[7];
+                btns[1].skin = imgsUrl[8];
                 isRuning = true;
             }
             runtime.setButtonSize(btns[0], value, color);
@@ -42573,11 +42596,11 @@ var Bricks;
                     for (var i = 0; i < brickArr.length; i++) {
                         if (brickArr[i][j].isLog) {
                             Laya.Tween.to(brickArr[i][j].Brick, { x: this.getBrickLeft(i), y: this.getBrickTop(nextJ) }, 100);
-                            brickArr[i][nextJ].Brick = brickArr[i][j].Brick;
-                            brickArr[i][nextJ].isLog = brickArr[i][j].isLog;
-                            brickArr[i][j].Brick = null;
-                            brickArr[i][j].isLog = false;
                         }
+                        brickArr[i][nextJ].Brick = brickArr[i][j].Brick;
+                        brickArr[i][nextJ].isLog = brickArr[i][j].isLog;
+                        brickArr[i][j].Brick = null;
+                        brickArr[i][j].isLog = false;
                     }
                 }
             }
@@ -42699,29 +42722,6 @@ var Bricks;
     Bricks_1.Bricks = Bricks;
 })(Bricks || (Bricks = {}));
 //# sourceMappingURL=Bricks.js.map
-/**
-* Models
-*/
-var Models;
-(function (Models) {
-    var LogBrick = /** @class */ (function () {
-        function LogBrick() {
-            this.isLog = false;
-        }
-        ;
-        return LogBrick;
-    }());
-    Models.LogBrick = LogBrick;
-    var BrickPos = /** @class */ (function () {
-        function BrickPos(_x, _y) {
-            this.x = _x;
-            this.y = _y;
-        }
-        return BrickPos;
-    }());
-    Models.BrickPos = BrickPos;
-})(Models || (Models = {}));
-//# sourceMappingURL=Models.js.map
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -42814,7 +42814,6 @@ var BackgroundUI;
                 btnMargin = width / 6;
                 btnWidth = btnMargin * 5;
             }
-            console.log(btnMargin);
             var btnLeft = new Button(imgsUrl[9]);
             btnLeft.width = btnWidth;
             btnLeft.height = btnHeight;
@@ -42893,9 +42892,9 @@ var BG = BackgroundUI.BackgroundUI;
 var BrickControl = Bricks.Bricks;
 var runtime = GameRuntime.GameRuntime;
 var borderWidth = 20;
-//舞台尺寸
-var stageWidth = 400;
-var stageHeight = 600;
+//舞台尺
+var stageWidth = window.innerWidth;
+var stageHeight = window.innerHeight;
 //游戏速度
 var loopSpeed = 800;
 var moveSpeed = loopSpeed / 5;

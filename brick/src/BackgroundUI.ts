@@ -84,8 +84,7 @@ module BackgroundUI {
 				btnMargin = width / 6;
 				btnWidth = btnMargin * 5;
 			}
-
-			console.log(btnMargin)
+			
 			let btnLeft: Button = new Button(imgsUrl[9]);
 			btnLeft.width = btnWidth;
 			btnLeft.height = btnHeight;

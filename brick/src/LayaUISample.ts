@@ -9,9 +9,9 @@ import BrickControl = Bricks.Bricks;
 import runtime = GameRuntime.GameRuntime;
 
 const borderWidth = 20;
-//舞台尺寸
-const stageWidth: number = 400;
-const stageHeight: number = 600;
+//舞台尺
+const stageWidth: number = window.innerWidth;
+const stageHeight: number = window.innerHeight;
 //游戏速度
 let loopSpeed: number = 800;
 let moveSpeed: number = loopSpeed / 5;

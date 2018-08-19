@@ -90,7 +90,6 @@ var BackgroundUI;
                 btnMargin = width / 6;
                 btnWidth = btnMargin * 5;
             }
-            console.log(btnMargin);
             var btnLeft = new Button(imgsUrl[9]);
             btnLeft.width = btnWidth;
             btnLeft.height = btnHeight;
